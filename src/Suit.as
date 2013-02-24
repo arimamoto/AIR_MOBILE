@@ -11,16 +11,44 @@ package
 		public static var CLUBS:int    = 2;
 		public static var HEARTS:int   = 3;
 		
-		public function Suit() 
+		public static var ALL = new Array( SPADES, DIAMONDS, CLUBS, HEARTS );
+
+		public static var suitStringMap:Object = {
+				0: "spades",
+				1: "diamonds",
+				2: "clubs",
+				3: "hearts"
+		};
+		
+		private var suit:int;
+		
+		public function Suit(num:int) 
 		{
-			
+			this.suit = ALL[num];
 		}
 		
 		public static function All():Array {
-				return new Array( SPADES, DIAMONDS, CLUBS, HEARTS );
-		
+				return ALL;
 		}
 		
+		public function toString():String {
+			return suitStringMap[this.suit];	
+		}
+		
+		public function getColor():String {
+			var color:String;
+			switch(this.suit) {
+				case SPADES:
+				case CLUBS:
+					color = "black";
+					break;
+				case DIAMONDS:
+				case HEARTS:
+					color = "red";
+					break;
+			}
+			return color;
+		}
 	}
 
 }

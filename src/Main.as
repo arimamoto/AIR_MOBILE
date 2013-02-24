@@ -32,6 +32,7 @@ package
 			
 			for each(var card:Card in allCards) {
 				//trace(card.number);
+
 				stage.addChild(card);
 			}
 			
@@ -41,7 +42,7 @@ package
 		private function deactivate(e:Event):void 
 		{
 			// auto-close
-			NativeApplication.nativeApplication.exit();
+			//NativeApplication.nativeApplication.exit();
 		}
 		
 	}
