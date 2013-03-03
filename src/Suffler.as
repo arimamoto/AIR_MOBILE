@@ -1,6 +1,7 @@
 package  
 {
 	import flash.display.DisplayObject;
+	import flash.display.MovieClip;
 	import flash.display.Stage;
 	/**
 	 * ...
@@ -11,7 +12,9 @@ package
 		private var cards:Cards;
 		private var fields:Stage;
 		
-		private var piles;
+		private var homeCardSpots:/*CardSpot*/Array = new Array();
+		private var tableCardSpots:/*CardSpot*/Array = new Array();
+		
 		
 		public function Suffler(cards:Cards, fields:Stage) 
 		{
@@ -20,17 +23,14 @@ package
 			//trace("W: "+fields.fullScreenWidth+" H: "+fields.fullScreenWidth);
 		}
 		
-		private function randomShuffle(data:Array):Cards
+		private function randomShuffle(data:Cards):Cards
 		{
-			var tempCopy:Array = data.slice();
-			var resultArray:Cards = new Cards();
-			while (tempCopy.length > 0)
+			for (var i:int = 0; i < 100; i++ )
 			{
-				var index:int = Math.random() * tempCopy.length;
-				resultArray.push(tempCopy[index]);
-				tempCopy.splice(index, 1);
+				var index:int = Math.random() * data.length;
+				data.push(data.splice(index, 1)[0]);				
 			}
-			return resultArray;
+			return data;
 		}
 
 		/**
@@ -41,6 +41,7 @@ package
 			//全部右上
 			for each(var card:Card in cards) {
 				setPos(card, rightMargin(20), topMargin(20));
+				card.area = new Area(Area.PILE);
 			}
 			
 			//TODO: ランダムシャッフル的なアニメーション
@@ -51,11 +52,16 @@ package
 			//初期配置
 			var count = 0;
 			for (var i:int = 0; i < 7; i++) {
+				setPos(tableCardSpots[i], leftMargin(20) + xInterval(7, 20) * i, topMargin(180));
+				cards[count].area = new Area(Area.TABLE);
+				var parent:ICardSettable = tableCardSpots[i];
 				for (var j:int = 0; j <= i; j++) {
-					setPos(cards[count], leftMargin(20) + xInterval(7, 20) * i, topMargin(180) + j * Card.SLIDE_HEIGHT);
+					parent.setOn(cards[count]);
 					if (i == j) {
 						cards[count].canMove = 1;
+						cards[count].sides = 1;
 					}
+					parent = cards[count];
 					count++;
 				}
 			}
@@ -66,15 +72,34 @@ package
 		 *  カードスポットを配置する
 		 * 　一番最初に一度だけ呼ばれるはず
 		 */
-		public function setCardSpot() {
+		public function setCardSpot():Array {
+			// ホームカードスポット
+			for each(var suitNum:int in Suit.All()) {
+				var cs:CardSpot = new CardSpot(new Array(new Suit(suitNum)), 1);
+				setPos(cs, leftMargin(20) + (Card.WIDTH + 15) * suitNum, topMargin(20));
+				homeCardSpots.push(cs);
+			}
 			
+			var ALL_OBJ_ARRAY:Array = new Array();
+			for each (var suitNum:int in Suit.All()) {
+				ALL_OBJ_ARRAY.push(new Suit(suitNum));
+			}
+			
+			//　テーブルカードスポット
+			for (var i = 0; i < 7; i++) {
+				var cs:CardSpot = new CardSpot(ALL_OBJ_ARRAY, 13);
+				setPos(cs, leftMargin(20) + xInterval(7, 20) * i, topMargin(180));
+				tableCardSpots.push(cs);
+			}
+			
+			return homeCardSpots.concat(tableCardSpots);
 		}
 		
 		public function pileShuffle() {
 			
 		}
 		
-		private function setPos(card:Card, x:int, y:int) {
+		private function setPos(card:MovieClip, x:int, y:int) {
 			card.x = x;
 			card.y = y;
 		}

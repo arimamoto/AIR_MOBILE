@@ -35,6 +35,14 @@ package
 			return suitStringMap[this.suit];	
 		}
 		
+		public function equalTo(suit:Suit) {
+			if (this.suit == suit.suit) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		
 		public function getColor():String {
 			var color:String;
 			switch(this.suit) {

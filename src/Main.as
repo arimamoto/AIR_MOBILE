@@ -26,15 +26,23 @@ package
 			
 			// entry point
 			
-			//トランプを置く場所の準備
-			
 			// トランプの準備
 			var allCards:Cards = new Cards().createCards();
+			var allCardSpots:Array;
 			
 			var suffler:Suffler = new Suffler(allCards, stage);
+			// トランプを置く場所の準備
+			allCardSpots = suffler.setCardSpot();
+			allCards.setSpots(allCardSpots);
+			
 			allCards = suffler.initShffle();
 			
-			for (var i:int = 0; i < allCards.length; i++ ) {
+			//重ね順を気にしながら配置
+			var i:int;
+			for (i = 0; i < allCardSpots.length; i++) {
+				stage.addChild(allCardSpots[i]);
+			}
+			for (i = 0; i < allCards.length; i++ ) {
 				stage.addChild(allCards[i]);
 			}
 			

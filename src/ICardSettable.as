@@ -7,8 +7,8 @@ package
 	 */
 	public interface ICardSettable 
 	{
-		function canSetOn(card:Card):Boolean;
-		function setOn(card:Card):void;
+		function canSetOn(card:Card):Boolean; // プレイヤーがカードを上に重ねることができるか判定する
+		function setOn(card:Card):void; // 実際にカードを動かすための処理
 	}
 	
 }

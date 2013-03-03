@@ -25,8 +25,10 @@ package
 		public var suit:Suit;　　　　//マーク
 		
 		public var sides:int = 0; // 裏:0 表：1
+		public var area:Area;
 		
-		public var childCards:Array = new Array();
+		public var parentCard:Card; // 自分の下にあるカード
+		public var childCard:Card; // 自分の上にのっているカード
 		
 		public var canMove:int = 0; //ドラッグできるかどうか
 		private var canTurnOut:int = 1; //ひっくり返せるかどうか
@@ -59,11 +61,38 @@ package
 		 * @return　boolean
 		 */
 		public function canSetOn(card:Card):Boolean {
-			// TODO: 上に片付けるときの処理もかく
-			if (card.number == this.number - 1 && card.suit.getColor() != this.suit.getColor()) {
-				return true;	
+			// 裏を向いているときはなにも配置できない
+			if (this.sides == 0){
+					return false;
 			}
-			
+			//　表を向いているときは、自分の場所によってかわる
+			else {
+				switch(this.area){
+					case Area.HOME:
+						// 数字がひとつ上かつ同じマークのみ
+						if (card.number == this.number +1 && card.suit == this.suit) {
+							return true;
+						} else {
+							return false;
+						}
+						break;
+					case Area.TABLE:
+						// 数字がひとつ下かつ色違いのみ
+						if (card.number == this.number - 1 && card.suit.getColor() != this.suit.getColor()) {
+							return true;	
+						} else {
+							return false;
+						}
+						break;
+					case Area.PILE:
+						return false;
+						break;
+					case Area.CAT:
+						// ねこは一枚しかもてない
+						return false;
+						break;
+				}
+			}
 			return false;
 		}
 		
@@ -76,7 +105,7 @@ package
 			card.x = this.x;
 			card.y = this.y + Card.SLIDE_HEIGHT;
 			
-			this.childCards.push(card);
+			this.childCard　= card;
 		}
 		
 		
