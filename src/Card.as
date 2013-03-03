@@ -13,18 +13,22 @@ package
 	 * ...
 	 * @author satetsu888
 	 */
-	public class Card extends MovieClip
+	public class Card extends MovieClip implements ICardSettable
 	{
-		public static var WIDTH = 90;
-		public static var HEIGHT = 150;
-		public static var ELIPS = 10;
+		public static var WIDTH = 80;
+		public static var HEIGHT = 140;
+		public static var ELIPS = 10; //角のまるさ
+		
+		public static var SLIDE_HEIGHT = 20; //カードを重ねたときずらす高さ
 		
 		public var number:int;  //数字
 		public var suit:Suit;　　　　//マーク
 		
 		public var sides:int = 0; // 裏:0 表：1
 		
-		private var canMove:int = 1; //ドラッグできるかどうか
+		public var childCards:Array = new Array();
+		
+		public var canMove:int = 0; //ドラッグできるかどうか
 		private var canTurnOut:int = 1; //ひっくり返せるかどうか
 		
 		private var startX;
@@ -52,10 +56,10 @@ package
 		/**
 		 * このカードの上におけるカードかどうか判定する
 		 * @param	card　上に置きたいカード
-		 * @param	setType　配置タイプ　0:フィールド上で重ねるやつ　1:上で重ねるやつ　を想定
 		 * @return　boolean
 		 */
-		public function canSetOn(card:Card, setType:int = 0):Boolean {
+		public function canSetOn(card:Card):Boolean {
+			// TODO: 上に片付けるときの処理もかく
 			if (card.number == this.number - 1 && card.suit.getColor() != this.suit.getColor()) {
 				return true;	
 			}
@@ -64,14 +68,18 @@ package
 		}
 		
 		/**
-		 * 別のカードの上に移動する
+		 * 別のカードをこのカードの上に移動する
 		 * @param	card　別のカード
-		 * @param	setType　配置タイプ　0:フィールド上で重ねるやつ　1:上で重ねるやつ　を想定
 		 */
-		public function setOn(card:Card, setType:int = 0) {
-			this.x = card.x;
-			this.y = card.y + 10;
+		public function setOn(card:Card):void {
+			// TODO: 上の片付けるエリアにおいた場合の処理も書く
+			card.x = this.x;
+			card.y = this.y + Card.SLIDE_HEIGHT;
+			
+			this.childCards.push(card);
 		}
+		
+		
 		
 		/**
 		 * ドラッグを始める前の場所に戻す
@@ -130,9 +138,9 @@ package
 				dispatchEvent(new Event("cardMoved"));
 				with (e.target) {
 					stopDrag();
-					// TODO: 重ね順をいい感じに変更する
-					//this.parent.addChild(this);
 				}
+					// 重ね順をいい感じに変更する
+					e.target.parent.addChild(e.target);
 			});
 			
 			this.addEventListener(TouchEvent.TOUCH_TAP, function(e) {

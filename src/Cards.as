@@ -5,7 +5,7 @@ package
 	 * ...
 	 * @author satetsu888
 	 */
-	public dynamic class Cards extends Array
+	public dynamic class Cards extends/*Card*/Array
 	{
 		public function Cards()
 		{
@@ -50,7 +50,7 @@ package
 				// デバッグ用にとりあえずどこでもおけるようにしとく
 				//movedCard.getBack();
 			} else {
-				movedCard.setOn(moveOnTo);
+				moveOnTo.setOn(movedCard);
 			}
 		}
 	}

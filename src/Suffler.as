@@ -20,23 +20,54 @@ package
 			//trace("W: "+fields.fullScreenWidth+" H: "+fields.fullScreenWidth);
 		}
 		
-		public function shuffle() {
-			
+		private function randomShuffle(data:Array):Cards
+		{
+			var tempCopy:Array = data.slice();
+			var resultArray:Cards = new Cards();
+			while (tempCopy.length > 0)
+			{
+				var index:int = Math.random() * tempCopy.length;
+				resultArray.push(tempCopy[index]);
+				tempCopy.splice(index, 1);
+			}
+			return resultArray;
 		}
-		
-		public function initShffle() {
+
+		/**
+		 *  トランプをゲーム開始時の配置にする
+		 */
+		public function initShffle():Cards {
 			
 			//全部右上
 			for each(var card:Card in cards) {
-				setPos(card, leftMargin(20), topMargin(20));
+				setPos(card, rightMargin(20), topMargin(20));
 			}
 			
+			//TODO: ランダムシャッフル的なアニメーション
+			
+			//ランダムシャッフル
+			this.cards = randomShuffle(cards);
+			
 			//初期配置
-			for (var i:int = 7; i >0; i--) {
-				for (var j:int = i; j > i; j--) {
-					
+			var count = 0;
+			for (var i:int = 0; i < 7; i++) {
+				for (var j:int = 0; j <= i; j++) {
+					setPos(cards[count], leftMargin(20) + xInterval(7, 20) * i, topMargin(180) + j * Card.SLIDE_HEIGHT);
+					if (i == j) {
+						cards[count].canMove = 1;
+					}
+					count++;
 				}
 			}
+			return this.cards;
+		}
+		
+		/**
+		 *  カードスポットを配置する
+		 * 　一番最初に一度だけ呼ばれるはず
+		 */
+		public function setCardSpot() {
+			
 		}
 		
 		public function pileShuffle() {
@@ -48,10 +79,10 @@ package
 			card.y = y;
 		}
 		
-		private function rightMargin(x:int) {
+		private function leftMargin(x:int) {
 			return x;
 		}
-		private function leftMargin(x:int) {
+		private function rightMargin(x:int) {
 			return fields.fullScreenWidth - x - Card.WIDTH;
 		}
 		private function topMargin(y:int) {
@@ -59,6 +90,10 @@ package
 		}
 		private function bottomMargin(y:int) {
 			return fields.fullScreenHeight - y - Card.HEIGHT;
+		}
+		
+		private function xInterval(numOfObjects:int, margin:int) {
+			return (fields.fullScreenWidth - margin * 2) / numOfObjects;			
 		}
 		
 	}

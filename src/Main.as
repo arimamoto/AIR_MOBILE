@@ -25,15 +25,17 @@ package
 			Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
 			
 			// entry point
+			
+			//トランプを置く場所の準備
+			
+			// トランプの準備
 			var allCards:Cards = new Cards().createCards();
 			
 			var suffler:Suffler = new Suffler(allCards, stage);
-			suffler.initShffle();
+			allCards = suffler.initShffle();
 			
-			for each(var card:Card in allCards) {
-				//trace(card.number);
-
-				stage.addChild(card);
+			for (var i:int = 0; i < allCards.length; i++ ) {
+				stage.addChild(allCards[i]);
 			}
 			
 			// new to AIR? please read *carefully* the readme.txt files!
