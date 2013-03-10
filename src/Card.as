@@ -31,6 +31,7 @@ package
 		public var childCard:Card; // 自分の上にのっているカード
 		
 		public var canMove:int = 0; //ドラッグできるかどうか
+		private var isDragging:Boolean = false;
 		private var canTurnOut:int = 1; //ひっくり返せるかどうか
 		
 		private var startX;
@@ -67,7 +68,7 @@ package
 			}
 			//　表を向いているときは、自分の場所によってかわる
 			else {
-				switch(this.area){
+				switch(this.area.toNum()){
 					case Area.HOME:
 						// 数字がひとつ上かつ同じマークのみ
 						if (card.number == this.number +1 && card.suit == this.suit) {
@@ -101,14 +102,35 @@ package
 		 * @param	card　別のカード
 		 */
 		public function setOn(card:Card):void {
+			//カードの表示位置関連
 			// TODO: 上の片付けるエリアにおいた場合の処理も書く
 			card.x = this.x;
 			card.y = this.y + Card.SLIDE_HEIGHT;
 			
-			this.childCard　= card;
+			this.childCard　 = card;
+			card.parentCard = this;
+			this.addEventListener("dragging", followChilds);
+			if (this.childCard.childCard != null) {
+				this.childCard.setOn(this.childCard.childCard);
+			}
 		}
 		
-		
+		/**
+		 * このカードの上に載っていたカードを取り除いたときの処理
+		 * @param	card
+		 */
+		public function removeFrom(card:Card):void {
+			if (this.sides == 0) {
+				this.sides = 1;	
+			}
+			if (this.canMove == 0) {
+					this.canMove = 1;
+			}
+			
+			this.removeEventListener("dragging", followChilds);
+			card.parentCard = null;
+			this.childCard = null;
+		}
 		
 		/**
 		 * ドラッグを始める前の場所に戻す
@@ -152,6 +174,15 @@ package
 			g.drawRoundRect(0, 0, WIDTH, HEIGHT, ELIPS);			
 		}
 		
+		public function followChilds(e:MouseEvent) {
+			if (this.childCard) {
+			trace(this.toString());	
+				this.childCard.x = this.x;
+				this.childCard.y = this.y + Card.SLIDE_HEIGHT;
+				this.childCard.dispatchEvent(e);
+			}
+		}
+		
 		private function setHandler() {
 			this.addEventListener(MouseEvent.MOUSE_DOWN, function(e) {
 				if (e.target.canMove) {
@@ -159,7 +190,13 @@ package
 						startX = x;
 						startY = y;
 						startDrag();
+						isDragging = true;
 					}
+				}
+			});
+			this.addEventListener(MouseEvent.MOUSE_MOVE, function(e) {
+				if(e.target.isDragging){
+					dispatchEvent(new MouseEvent("dragging"));
 				}
 			});
 			
@@ -167,6 +204,7 @@ package
 				dispatchEvent(new Event("cardMoved"));
 				with (e.target) {
 					stopDrag();
+					isDragging = false;
 				}
 					// 重ね順をいい感じに変更する
 					e.target.parent.addChild(e.target);

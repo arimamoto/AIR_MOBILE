@@ -48,7 +48,15 @@ package
 			card.x = this.x;
 			card.y = this.y;
 			
-			this.childCard　= card;
+			this.childCard　 = card;
+			
+			if (this.childCard.childCard != null) {
+				this.childCard.setOn(this.childCard.childCard);
+			}
+		}
+		
+		public function removeFrom(card:Card):void {
+			
 		}
 		
 		/**
@@ -75,8 +83,8 @@ package
 			
 			//暫定２
 			var tf:TextField = new TextField();
-			tf.text = this.toString();
-			bmd.draw(tf);
+			//tf.text = this.toString();
+			//bmd.draw(tf);
 			g.beginBitmapFill(bmd);
 			
 			g.drawRoundRect(0, 0, WIDTH, HEIGHT, ELIPS);			

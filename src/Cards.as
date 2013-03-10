@@ -49,10 +49,14 @@ package
 			trace(movedCard.toString()+ " is moved");
 			
 			var moveOnTo:ICardSettable = null;
+			var movedFrom:ICardSettable = null;
+			
 			for each(var card:Card in this) {
+				if(movedCard === card) { continue; }
 				if (movedCard.hitTestObject(card)) {
 					if (card.canSetOn(movedCard)) {
 						moveOnTo = card;
+						movedFrom = movedCard.parentCard;
 					}
 				}
 			}
@@ -60,6 +64,7 @@ package
 				if (movedCard.hitTestObject(cs)) {
 					if (cs.canSetOn(movedCard)) {
 						moveOnTo = cs;
+						movedFrom = movedCard.parentCard;
 					}
 				}				
 			}
@@ -67,6 +72,9 @@ package
 				// デバッグ用にとりあえずどこでもおけるようにしとく
 				//movedCard.getBack();
 			} else {
+				if(movedFrom != null) {
+					movedFrom.removeFrom(movedCard);
+				}
 				moveOnTo.setOn(movedCard);
 			}
 		}

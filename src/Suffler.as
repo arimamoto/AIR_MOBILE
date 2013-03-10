@@ -53,10 +53,10 @@ package
 			var count = 0;
 			for (var i:int = 0; i < 7; i++) {
 				setPos(tableCardSpots[i], leftMargin(20) + xInterval(7, 20) * i, topMargin(180));
-				cards[count].area = new Area(Area.TABLE);
 				var parent:ICardSettable = tableCardSpots[i];
 				for (var j:int = 0; j <= i; j++) {
 					parent.setOn(cards[count]);
+					cards[count].area = new Area(Area.TABLE);
 					if (i == j) {
 						cards[count].canMove = 1;
 						cards[count].sides = 1;
